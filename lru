@@ -1,0 +1,47 @@
+#include <iostream>
+#include <cstdlib>
+#include <utility>
+#include <deque>
+using namespace std; 
+
+void sort(int a, deque<int> &d){
+	int temp = d[a];
+	for(int i=a-1; i>0;i--) {
+		d[i+1] = d[i];
+	}
+	d[1] = temp;
+}
+int main(int argc, char* argv[]) {
+	int cache_size = atoi(argv[1]);
+	deque<int> cache(cache_size); 
+	int c, count=0, temp=0, flag=0, page_fault=0;
+	cin>>c;
+	while (!cin.eof()) {
+		for (int i=0; i<cache_size; i++) {
+			if (c== cache[i]) {	// c is in the cache
+				if (i>=1) {
+					temp = cache[0]; // swap the front with cache[i]
+					cache[0] = cache[i];
+					cache[i] = temp;	
+					sort(i,cache);	// sort the cache list so what was in the front can be second 
+				}
+				i = cache_size; // end the for loop
+				flag=1;	// already added 
+			}
+		}
+		if (flag==0) { // couldn't find c in cache
+			cerr << c << endl;
+			page_fault++;
+			if (count > cache_size) {
+				cache.pop_back();
+			}			
+			cache.push_front(c);
+		}
+		count++;
+		cin >> c;
+		flag=0;
+	}
+	cout << count << endl;
+	cout << page_fault << endl;
+	return 0; 
+}
